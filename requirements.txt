@@ -6,3 +6,4 @@ Flask_Migrate
 Flask_SocketIO
 eventlet
 python-dotenv
+gunicorn
