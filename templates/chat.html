@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Chat{% endblock %}
+{% block content %}
+<div id="messages" class="border p-3 mb-3" style="height:300px; overflow-y:scroll;"></div>
+<input type="text" id="text" class="form-control" placeholder="Type..." autocomplete="off">
+<div id="typing" class="text-muted small mt-1"></div>
+
+<script>
+const socket = io();
+const room = "{{ group_id }}";
+socket.emit('join', { room });
+
+socket.on('user_presence', users => {
+  document.getElementById('typing').innerText = 'Online: ' + users.join(', ');
+});
+
+socket.on('typing', d => {
+  document.getElementById('typing').innerText = d.user + ' is typing…';
+  setTimeout(() => document.getElementById('typing').innerText = '', 1500);
+});
+
+socket.on('new_message', data => {
+  const div = document.createElement('div');
+  div.innerHTML = '<b>' + data.user + ':</b> ' + data.content;
+  document.getElementById('messages').appendChild(div);
+});
+
+document.getElementById('text').addEventListener('input', () => {
+  socket.emit('typing', { room });
+});
+
+document.getElementById('text').addEventListener('keyup', ev => {
+  if (ev.key === 'Enter' && ev.target.value.trim()) {
+    socket.emit('send_message', { room, content: ev.target.value });
+    ev.target.value = '';
+  }
+});
+</script>
+{% endblock %}

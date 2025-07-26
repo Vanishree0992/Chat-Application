@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Group List{% endblock %}
+{% block content %}
+<h2>Available Chat Groups</h2>
+<ul class="list-group">
+    {% for group in groups %}
+    <li class="list-group-item">
+        <a href="{{ url_for('main.chat', group_id=group.id) }}">{{ group.name }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
